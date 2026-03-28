@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiosk Partner Admin</title>
+    <!-- 폰트 적용 (Pretendard) -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/variable/pretendardvariable.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 아이콘 적용 (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+    <!-- 앱 전체 컨테이너 -->
+    <div id="app">
+        
+        <!-- 로그인 화면 (초기엔 이것만 보임) -->
+        <div id="login-view" class="view active">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Kiosk Partner</h2>
+                    <p>점주 전용 관리자 페이지</p>
+                </div>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="username">아이디</label>
+                        <input type="text" id="username" placeholder="아이디를 입력하세요" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">비밀번호</label>
+                        <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="btn-login">로그인</button>
+                    <p class="error-msg" id="login-error"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- 메인 관리자 화면 (로그인 성공 시 보임) -->
+        <div id="main-view" class="view">
+            <!-- 사이드바 / 하단 네비게이션 -->
+            <nav id="nav-bar">
+                <div class="nav-logo">
+                    <i class="ph ph-storefront"></i>
+                    <span>Partner</span>
+                </div>
+                <ul class="nav-links">
+                    <li class="active" data-target="dashboard-section">
+                        <i class="ph ph-chart-line-up"></i>
+                        <span>대시보드</span>
+                    </li>
+                    <li data-target="orders-section">
+                        <i class="ph ph-receipt"></i>
+                        <span>주문 내역</span>
+                    </li>
+                    <li data-target="products-section">
+                        <i class="ph ph-package"></i>
+                        <span>상품 관리</span>
+                    </li>
+                    <li data-target="settings-section">
+                        <i class="ph ph-gear"></i>
+                        <span>설정</span>
+                    </li>
+                </ul>
+                <div class="nav-logout">
+                    <button id="btn-logout" class="btn-ghost">
+                        <i class="ph ph-sign-out"></i>
+                        <span>로그아웃</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- 메인 콘텐츠 영역 -->
+            <main id="content-area">
+                
+                <!-- 상단 헤더 (모바일 등에선 요약 정보 표시) -->
+                <header class="top-header">
+                    <h1 id="page-title">대시보드</h1>
+                    <div class="user-profile">
+                        <span id="store-name-display">내 매장</span>
+                        <div class="avatar"><i class="ph ph-user"></i></div>
+                    </div>
+                </header>
+
+                <div class="sections">
+                    <!-- 1. 대시보드 섹션 -->
+                    <section id="dashboard-section" class="content-section active">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="ph ph-coins"></i></div>
+                                <div>
+                                    <p class="stat-label">오늘 매출</p>
+                                    <h3 class="stat-value">₩0</h3>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="ph ph-receipt"></i></div>
+                                <div>
+                                    <p class="stat-label">오늘 주문 건수</p>
+                                    <h3 class="stat-value">0건</h3>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-orders-preview card">
+                            <div class="card-header">
+                                <h3>최근 들어온 주문</h3>
+                                <button class="btn-text">전체보기</button>
+                            </div>
+                            <!-- 주문 리스트가 여기에 렌더링 됩니다 -->
+                            <div class="empty-state">아직 오늘 들어온 주문이 없습니다.</div>
+                        </div>
+                    </section>
+
+                    <!-- 2. 주문 내역 섹션 -->
+                    <section id="orders-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>전체 주문 내역</h3>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>주문번호</th>
+                                            <th>금액</th>
+                                            <th>결제수단</th>
+                                            <th>상태</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orders-table-body">
+                                        <!-- 자바스크립트로 채워짐 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 3. 상품 관리 섹션 -->
+                    <section id="products-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>판매 중인 상품</h3>
+                                <button class="btn-primary-sm"><i class="ph ph-plus"></i> 새 상품 등록</button>
+                            </div>
+                            <div class="product-grid" id="product-list-container">
+                                <!-- 자바스크립트로 채워짐 -->
+                                <!-- 예시 뼈대 -->
+                                <div class="empty-state">상품 정보를 불러오고 있습니다...</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 4. 설정 섹션 -->
+                    <section id="settings-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>매장 정보</h3>
+                            </div>
+                            <div class="settings-form">
+                                <p>개발 준비 중입니다.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 스크립트 모음 -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
