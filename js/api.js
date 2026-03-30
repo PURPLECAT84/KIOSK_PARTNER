@@ -65,15 +65,77 @@ const API = {
     },
 
     // ===== 2. 상점 API =====
-    // 사용자의 현재 상점 정보를 가져옴 (로그인 즉시 호출)
-    async getMyStores() {
-        return this.request('/store/my'); // *주의: 현재 작성하신 API에 /my 가 없다면 수정이 필요합니다. 일단 가정하고 만듭니다.
-        // 현재 user 데이터만 가져오게끔 하거나, 백엔드 라우터 구조에 맞춥니다.
+    // 사용자의 현재 상점 리스트를 가져옴
+    async getStores() {
+        return this.request('/store/'); 
     },
 
-    // ===== 3. 상품 API =====
+    async createStore(data) {
+        return this.request('/store/', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    },
+
+    async updateStore(storeId, data) {
+        return this.request(`/store/${storeId}`, {
+            method: 'PATCH',
+            body: JSON.stringify(data)
+        });
+    },
+
+    // ===== 3. 대시보드 API =====
+    async getDashboardSummary() {
+        return this.request('/dashboard/summary');
+    },
+
+    async getBestSellers() {
+        return this.request('/dashboard/best-sellers');
+    },
+
+    // ===== 4. 상품 및 카테고리 API =====
+    async getCategories(storeId) {
+        return this.request(`/categories/store/${storeId}`);
+    },
+
     async getProducts(storeId) {
         return this.request(`/products/store/${storeId}`);
+    },
+
+    // 2MB 이미지 업로드 처리
+    async uploadProductImage(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const token = localStorage.getItem('access_token');
+        const headers = {
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }; // Content-Type을 지정하지 않아야 브라우저가 자동 boundary 추가함
+
+        const response = await fetch(`${BASE_URL}/products/image`, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.detail || '이미지 업로드에 실패했습니다.');
+        }
+        return data;
+    },
+
+    async createProduct(data) {
+        return this.request(`/products/`, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    },
+
+    async deleteProduct(storeId, productId) {
+        return this.request(`/products/store/${storeId}/product/${productId}`, {
+            method: 'DELETE'
+        });
     },
 
     async updateProductStatus(productId, is_active, stock) {
@@ -81,7 +143,25 @@ const API = {
             method: 'PATCH',
             body: JSON.stringify({ is_active, stock })
         });
+    },
+
+    // ===== 5. 회원 및 개인정보 API =====
+    async getMe() {
+        return this.request('/users/me');
+    },
+
+    async updateMe(data) {
+        return this.request('/users/me', {
+            method: 'PATCH',
+            body: JSON.stringify(data)
+        });
+    },
+
+    // ===== 6. 주문 내역 API =====
+    async getOrders(storeId, startDate, endDate) {
+        let url = `/order/?store_id=${storeId}`;
+        if(startDate) url += `&start_date=${startDate}`;
+        if(endDate) url += `&end_date=${endDate}`;
+        return this.request(url);
     }
-    
-    // 이후 추가될 API들 (주문 내역 등) 여기에 작성
 };

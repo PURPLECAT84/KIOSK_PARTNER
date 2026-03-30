@@ -77,9 +77,21 @@
                 <!-- 상단 헤더 (모바일 등에선 요약 정보 표시) -->
                 <header class="top-header">
                     <h1 id="page-title">대시보드</h1>
-                    <div class="user-profile">
+                    <div class="user-profile" id="user-profile-btn" style="cursor: pointer; position: relative;">
                         <span id="store-name-display">내 매장</span>
                         <div class="avatar"><i class="ph ph-user"></i></div>
+                        
+                        <!-- 드롭다운 메뉴 -->
+                        <div id="profile-dropdown" class="profile-dropdown">
+                            <div class="dropdown-header">관리 매장 전환</div>
+                            <ul id="store-dropdown-list">
+                                <!-- 자바스크립트로 리스트 삽입 -->
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li id="btn-open-profile-modal"><i class="ph ph-user-circle"></i> 내 개인정보 수정</li>
+                            </ul>
+                        </div>
                     </div>
                 </header>
 
@@ -91,14 +103,21 @@
                                 <div class="stat-icon"><i class="ph ph-coins"></i></div>
                                 <div>
                                     <p class="stat-label">오늘 매출</p>
-                                    <h3 class="stat-value">₩0</h3>
+                                    <h3 class="stat-value" id="dashboard-today-sales">₩0</h3>
                                 </div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-icon"><i class="ph ph-receipt"></i></div>
                                 <div>
                                     <p class="stat-label">오늘 주문 건수</p>
-                                    <h3 class="stat-value">0건</h3>
+                                    <h3 class="stat-value" id="dashboard-today-orders">0건</h3>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: #E0E7FF; color: #4F46E5;"><i class="ph ph-calendar-check"></i></div>
+                                <div>
+                                    <p class="stat-label">이번 달 매출</p>
+                                    <h3 class="stat-value" id="dashboard-monthly-sales">₩0</h3>
                                 </div>
                             </div>
                         </div>
@@ -116,14 +135,23 @@
                     <!-- 2. 주문 내역 섹션 -->
                     <section id="orders-section" class="content-section">
                         <div class="card">
-                            <div class="card-header">
-                                <h3>전체 주문 내역</h3>
+                            <div class="card-header" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+                                <div style="display:flex; justify-content:space-between; width:100%;">
+                                    <h3>전체 주문 내역</h3>
+                                </div>
+                                <div class="date-filter">
+                                    <input type="date" id="order-start-date" class="date-input">
+                                    <span>~</span>
+                                    <input type="date" id="order-end-date" class="date-input">
+                                    <button class="btn-primary-sm" id="btn-search-orders">조회</button>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th>주문번호</th>
+                                            <th>주문번호/일시</th>
+                                            <th>주문 요약 (메뉴)</th>
                                             <th>금액</th>
                                             <th>결제수단</th>
                                             <th>상태</th>
@@ -142,7 +170,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3>판매 중인 상품</h3>
-                                <button class="btn-primary-sm"><i class="ph ph-plus"></i> 새 상품 등록</button>
+                                <button class="btn-primary-sm" id="btn-open-modal"><i class="ph ph-plus"></i> 새 상품 등록</button>
                             </div>
                             <div class="product-grid" id="product-list-container">
                                 <!-- 자바스크립트로 채워짐 -->
@@ -156,15 +184,62 @@
                     <section id="settings-section" class="content-section">
                         <div class="card">
                             <div class="card-header">
-                                <h3>매장 정보</h3>
+                                <h3 id="settings-title">내 매장 등록 (최초 1회)</h3>
                             </div>
                             <div class="settings-form">
-                                <p>개발 준비 중입니다.</p>
+                                <form id="store-form">
+                                    <div class="input-group">
+                                        <label>매장 이름 (*)</label>
+                                        <input type="text" id="store-name" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>상세 주소 (*)</label>
+                                        <input type="text" id="store-address" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>업종 (자동설정)</label>
+                                        <input type="text" id="store-type" value="CAFE" disabled>
+                                    </div>
+                                    <button type="submit" class="btn-primary" id="btn-save-store">등록/저장하기</button>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-content card">
+            <div class="card-header">
+                <h3>새 상품 등록</h3>
+                <button type="button" class="btn-text" id="close-modal"><i class="ph ph-x" style="font-size:24px;"></i></button>
+            </div>
+            <form id="product-form">
+                <div class="input-group">
+                    <label>이미지 파일 (2MB 이하)</label>
+                    <input type="file" id="product-image-file" accept="image/*" required>
+                </div>
+                <div class="input-group">
+                    <label>카테고리</label>
+                    <select id="product-category" required style="width:100%; padding:14px; border:1px solid var(--border-color); border-radius:var(--radius-md);"></select>
+                </div>
+                <div class="input-group">
+                    <label>상품명</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="input-group">
+                    <label>가격 (₩)</label>
+                    <input type="number" id="product-price" required>
+                </div>
+                <div class="input-group">
+                    <label>바코드 (선택)</label>
+                    <input type="text" id="product-barcode">
+                </div>
+                <button type="submit" class="btn-primary" id="btn-save-product">업로드 및 등록하기</button>
+            </form>
         </div>
     </div>
 
