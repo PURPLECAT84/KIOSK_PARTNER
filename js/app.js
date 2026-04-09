@@ -20,8 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Parse Token from Supabase ---
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const supabaseToken = hashParams.get('access_token');
-    
-    if (supabaseToken) {
+    const authError = hashParams.get('error_description') || hashParams.get('error');
+
+    if (authError) {
+        // 백엔드/Supabase 설정 오류 (예: Redirect URL 등)
+        history.replaceState(null, null, ' ');
+        const decodedError = decodeURIComponent(authError.replace(/\+/g, ' '));
+        alert("소셜 로그인 설정 오류가 발생했습니다: \n" + decodedError + "\n\nSupabase 대시보드에서 Redirect URL이 등록되어 있는지 확인해주세요.");
+        checkAuthStatus();
+    } else if (supabaseToken) {
         // Clear the hash immediately so it doesn't stay in the URL
         history.replaceState(null, null, ' ');
         API.exchangeSupabaseToken(supabaseToken)

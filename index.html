@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kiosk Partner Admin</title>
+    <!-- Catch any unhandled JS errors and alert the user -->
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            alert("자바스크립트 내부 오류가 발생했습니다!\n\n에러: " + msg + "\n줄 번호:" + lineNo);
+            return false;
+        };
+    </script>
     <!-- 폰트 적용 (Pretendard) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/variable/pretendardvariable.css" />
     <link rel="stylesheet" href="css/style.css">
@@ -40,13 +47,13 @@
                 </div>
                 
                 <div class="social-login-group">
-                    <button type="button" class="btn-social btn-kakao" id="btn-kakao-login">
+                    <button type="button" class="btn-social btn-kakao" id="btn-kakao-login" onclick="alert('카카오 버튼 클릭됨! 곧 이동합니다...');">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                            <path d="M12 3C6.477 3 2 6.358 2 10.5C2 13.14 3.732 15.454 6.337 16.79C6.108 17.65 5.347 20.306 5.316 20.44C5.218 20.85 5.674 21.037 5.962 20.825C6.273 20.598 9.948 18.066 11.233 17.153C11.516 17.18 11.803 17.195 12.096 17.195C17.618 17.195 22.095 13.837 22.095 9.695C22.095 5.553 17.618 3 12 3Z"/>
                         </svg>
                         카카오로 시작하기
                     </button>
-                    <button type="button" class="btn-social btn-google" id="btn-google-login">
+                    <button type="button" class="btn-social btn-google" id="btn-google-login" onclick="alert('구글 버튼 클릭됨! 곧 이동합니다...');">
                         <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                             <!-- Custom Google colors using SVG gradient or simple fill -->
                             <path fill="#EA4335" d="M21.35 11.1H12.18V13.83H18.69C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5 16.25 5 12C5 7.9 8.2 4.73 12.2 4.73C15.29 4.73 17.1 6.7 17.1 6.7L19 4.72C19 4.72 16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12C2.03 17.05 6.16 22 12.25 22C17.6 22 21.5 18.33 21.5 12.91C21.5 11.76 21.35 11.1 21.35 11.1Z" />
@@ -263,8 +270,33 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content card">
+            <div class="card-header">
+                <h3>내 개인정보 수정</h3>
+                <button type="button" class="btn-text" id="close-profile-modal"><i class="ph ph-x" style="font-size:24px;"></i></button>
+            </div>
+            <form id="profile-form">
+                <div class="input-group">
+                    <label>이름</label>
+                    <input type="text" id="profile-name" required>
+                </div>
+                <div class="input-group">
+                    <label>전화번호</label>
+                    <input type="text" id="profile-phone" required>
+                </div>
+                <div class="input-group">
+                    <label>주소</label>
+                    <input type="text" id="profile-address" required>
+                </div>
+                <button type="submit" class="btn-primary" id="btn-save-profile">수정/저장하기</button>
+            </form>
+        </div>
+    </div>
+
     <!-- 스크립트 모음 -->
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/api.js?v=2"></script>
+    <script src="js/app.js?v=2"></script>
 </body>
 </html>
