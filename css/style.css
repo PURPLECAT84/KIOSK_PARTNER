@@ -135,6 +135,64 @@ body {
     min-height: 20px;
 }
 
+/* Social Login Styles */
+.social-divider {
+    display: flex;
+    align-items: center;
+    margin: 30px 0 20px;
+}
+.social-divider::before, .social-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+.social-divider span {
+    padding: 0 10px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+.social-login-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.btn-social {
+    width: 100%;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    box-shadow: var(--shadow-sm);
+}
+.btn-social:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+}
+.btn-kakao {
+    background-color: #FEE500;
+    color: #000000;
+}
+.btn-kakao:hover {
+    background-color: #E6CF00;
+}
+.btn-google {
+    background-color: #FFFFFF;
+    color: #3C4043;
+    border: 1px solid #DADCE0;
+}
+.btn-google:hover {
+    background-color: #F8F9FA;
+}
+
 /* ==================
    2. Main Dashboard Layout (PC Sidebar)
 ================== */

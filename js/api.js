@@ -64,6 +64,20 @@ const API = {
         return data; // { access_token, token_type }
     },
 
+    async exchangeSupabaseToken(supabaseToken) {
+        const response = await fetch(`${BASE_URL}/auth/supabase/exchange`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: supabaseToken })
+        });
+        
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.detail || '소셜 로그인 처리에 실패했습니다.');
+        }
+        return data; // { access_token, token_type }
+    },
+
     // ===== 2. 상점 API =====
     // 사용자의 현재 상점 리스트를 가져옴
     async getStores() {

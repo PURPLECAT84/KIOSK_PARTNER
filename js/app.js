@@ -17,8 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageTitle = document.getElementById('page-title');
     const btnLogout = document.getElementById('btn-logout');
 
-    // --- Initialization ---
-    checkAuthStatus();
+    // --- Parse Token from Supabase ---
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const supabaseToken = hashParams.get('access_token');
+    
+    if (supabaseToken) {
+        // Clear the hash immediately so it doesn't stay in the URL
+        history.replaceState(null, null, ' ');
+        API.exchangeSupabaseToken(supabaseToken)
+            .then(res => {
+                localStorage.setItem('access_token', res.access_token);
+                checkAuthStatus();
+            })
+            .catch(err => {
+                alert("소셜 로그인 인증에 실패했습니다: " + err.message);
+                checkAuthStatus();
+            });
+    } else {
+        // --- Initialization ---
+        checkAuthStatus();
+    }
 
     // 1. 로그인 상태 등 공통 체크
     async function checkAuthStatus() {
@@ -137,6 +155,21 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = false;
         }
     });
+
+    // 2.5 소셜 로그인 버튼 이벤트
+    const btnKakao = document.getElementById('btn-kakao-login');
+    const btnGoogle = document.getElementById('btn-google-login');
+    
+    if (btnKakao) {
+        btnKakao.addEventListener('click', () => {
+            window.location.href = 'http://127.0.0.1:8000/auth/kakao/login';
+        });
+    }
+    if (btnGoogle) {
+        btnGoogle.addEventListener('click', () => {
+            window.location.href = 'http://127.0.0.1:8000/auth/google/login';
+        });
+    }
 
     // 3. 로그아웃
     btnLogout.addEventListener('click', () => {
